@@ -1,0 +1,25 @@
+body {
+  max-width: 100%;
+  background: grey;
+}
+
+
+
+.ttt-row {
+  border: 1px solid white;
+border-radius: 10px;
+
+  max-width: 100%;
+  background: blue;
+  display: flex;
+  flex-flow: row;
+}
+
+.ttt-slot {
+  min-height: 30px;
+  min-width: 30px;
+  width: 33%;
+  text-align: center;
+  background: yellow;
+  padding: 20px;
+}
