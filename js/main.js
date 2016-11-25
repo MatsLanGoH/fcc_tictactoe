@@ -24,6 +24,10 @@ for (var i = 0; i < 9; i++) {
 // Globals to keep track of game state.
 var activePlayer = 'O';
 var moveCount = 0;
+var slotValues = [];
+for (var i = 0; i < 9; i++) {
+  slotValues[i] = null;
+}
 
 /***
 * Returns current player, and toggles to next player.
@@ -42,7 +46,6 @@ function togglePlayer() {
 function drawMove(el) {
   if (el.innerHTML.length === 0) {
     el.appendChild(document.createTextNode(togglePlayer()));
-    // console.log(el.innerHTML);
     moveCount++;
   }
 }
@@ -64,10 +67,35 @@ function clearBoard(board) {
   resetGameState();
 }
 
+
+function threeInARow(row) {
+  // Get initial item and compare all other items against it.
+  // If all items are equal, this will return true.
+  console.log(row[0]);
+
+  // If initial item not set return false.
+  if (row[0] == null) {
+    return false;
+  }
+  // If any item differs from initial, return false.
+  for (var i = 1; i < row.length; i++) {
+    if (row[i] != row[0]) {
+      return false;
+    }
+  }
+  console.log("All same");
+  return true;
+}
+
 /***
 * Checks GameState.
 ***/
 function checkGameState() {
+  // A player has scored three in a row.
+  if (threeInARow(slotValues)) {
+    console.log(activePlayer + ' has won');
+  }
+  // Stalemate game.
   if (moveCount >= 9) {
     console.log('Game O-ver');
     clearBoard(t_listeners);
@@ -78,4 +106,7 @@ function checkGameState() {
 function resetGameState() {
   activePlayer = 'O';
   moveCount = 0;
+  slotValues.forEach(function(index) {
+    slotValues[index] = null;
+  })
 }
