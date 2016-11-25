@@ -5,15 +5,16 @@
 var t_listeners = [];
 
 // Iterate over array and assign a listener to each element.
-for (var i = 0; i < 9; i++) {
-  var t_slot = document.getElementById('t0' + i);
-  t_slot.addEventListener('click', function(){
-    drawMove(this);
+var t_slots = document.getElementsByClassName('ttt-slot');
+for (var i = 0; i < t_slots.length; i++) {
+  t_slots[i].addEventListener('click', function() {
+    var move = togglePlayer();
+    console.log(parseElementToMatrix(this.id));
+    drawMove(this, move);
     checkGameState();
-  })
-  t_listeners.push(t_slot);
-};
-
+  });
+  t_listeners.push(t_slots[i]);
+}
 
 
 /************
@@ -24,10 +25,28 @@ for (var i = 0; i < 9; i++) {
 // Globals to keep track of game state.
 var activePlayer = 'O';
 var moveCount = 0;
-var slotValues = [];
-for (var i = 0; i < 9; i++) {
-  slotValues[i] = null;
+var tttMatrix = initializeMatrix();
+
+
+/***
+* Initialize a 2d matrix (3*3)
+* and set each item to null
+***/
+function initializeMatrix() {
+  var matrix = [];
+  for (var i = 0; i < 3; i++) {
+    matrix.push(new Array());
+  }
+
+  matrix.forEach(function(row) {
+      for (var i = 0; i < 3; i++) {
+        row.push([null]);
+      }
+  });
+
+  return matrix;
 }
+
 
 /***
 * Returns current player, and toggles to next player.
@@ -43,11 +62,24 @@ function togglePlayer() {
 * Checks if element is empty,
 * then sets the element's content to active player.
 ***/
-function drawMove(el) {
+function drawMove(el, move) {
   if (el.innerHTML.length === 0) {
-    el.appendChild(document.createTextNode(togglePlayer()));
+    el.appendChild(document.createTextNode(move));
     moveCount++;
   }
+}
+
+
+function parseElementToMatrix(id) {
+    var position = [];
+    position.push(parseInt(id[1]));
+    position.push(parseInt(id[2]));
+    return position;
+}
+
+
+function addMoveToMatrix() {
+
 }
 
 /***
@@ -68,6 +100,9 @@ function clearBoard(board) {
 }
 
 
+/***
+* Checks if items in a row are equal.
+***/
 function threeInARow(row) {
   // Get initial item and compare all other items against it.
   // If all items are equal, this will return true.
@@ -92,7 +127,7 @@ function threeInARow(row) {
 ***/
 function checkGameState() {
   // A player has scored three in a row.
-  if (threeInARow(slotValues)) {
+  if (threeInARow(tttMatrix)) {
     console.log(activePlayer + ' has won');
   }
   // Stalemate game.
@@ -106,7 +141,5 @@ function checkGameState() {
 function resetGameState() {
   activePlayer = 'O';
   moveCount = 0;
-  slotValues.forEach(function(index) {
-    slotValues[index] = null;
-  })
+  initializeMatrix();
 }
