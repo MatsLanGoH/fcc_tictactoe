@@ -8,8 +8,9 @@ var t_listeners = [];
 var t_slots = document.getElementsByClassName('ttt-slot');
 for (var i = 0; i < t_slots.length; i++) {
   t_slots[i].addEventListener('click', function() {
-    var move = togglePlayer();
-    console.log(parseElementToMatrix(this.id));
+    var move = togglePlayer(),
+        [x, y] = parseElementToCoords(this.id);
+    tttGrid[x][y] = move;
     drawMove(this, move);
     checkGameState();
   });
@@ -25,26 +26,30 @@ for (var i = 0; i < t_slots.length; i++) {
 // Globals to keep track of game state.
 var activePlayer = 'O';
 var moveCount = 0;
-var tttMatrix = initializeMatrix();
+var tttGrid = initializeGrid();
 
+/*******************
+* HELPER FUNCTIONS *
+*******************/
 
 /***
-* Initialize a 2d matrix (3*3)
-* and set each item to null
+* Initialize a 2d grid (3*3) and set each item to null
 ***/
-function initializeMatrix() {
-  var matrix = [];
+function initializeGrid() {
+  var grid = [];
+  // Initialize rows
   for (var i = 0; i < 3; i++) {
-    matrix.push(new Array());
+    grid.push(new Array());
   }
 
-  matrix.forEach(function(row) {
+  // Initialize columns
+  grid.forEach(function(row) {
       for (var i = 0; i < 3; i++) {
         row.push([null]);
       }
   });
 
-  return matrix;
+  return grid;
 }
 
 
@@ -70,7 +75,10 @@ function drawMove(el, move) {
 }
 
 
-function parseElementToMatrix(id) {
+/***
+* Translates div id into coordinates for 2d grid
+***/
+function parseElementToCoords(id) {
     var position = [];
     position.push(parseInt(id[1]));
     position.push(parseInt(id[2]));
@@ -78,8 +86,12 @@ function parseElementToMatrix(id) {
 }
 
 
-function addMoveToMatrix() {
-
+/***
+* Adds value to grid at given coordinates
+***/
+function addMoveToGrid(grid, value, x, y) {
+  grid[x][y] = value;
+  return;
 }
 
 /***
@@ -106,7 +118,7 @@ function clearBoard(board) {
 function threeInARow(row) {
   // Get initial item and compare all other items against it.
   // If all items are equal, this will return true.
-  console.log(row[0]);
+  console.log(row);
 
   // If initial item not set return false.
   if (row[0] == null) {
@@ -119,21 +131,29 @@ function threeInARow(row) {
     }
   }
   console.log("All same");
-  return true;
+  return row[0];
 }
+
+
 
 /***
 * Checks GameState.
 ***/
 function checkGameState() {
   // A player has scored three in a row.
-  if (threeInARow(tttMatrix)) {
-    console.log(activePlayer + ' has won');
-  }
+  tttGrid.forEach(function(row) {
+    var allSame = threeInARow(row);
+    if (allSame) {
+      console.log(allSame + ' has won');
+      // TODO: Actually, call Game Over function.
+      return true;
+    }
+  })
   // Stalemate game.
   if (moveCount >= 9) {
     console.log('Game O-ver');
     clearBoard(t_listeners);
+
     console.log('Game Re-set!');
   }
 }
@@ -141,5 +161,5 @@ function checkGameState() {
 function resetGameState() {
   activePlayer = 'O';
   moveCount = 0;
-  initializeMatrix();
+  tttGrid = initializeGrid();
 }

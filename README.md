@@ -11,13 +11,13 @@ TicTacToe Zipline for FreeCodeCamp
 
 ## Memo
 - [IDEA] How to best check winning conditions?
-Same values for all in same row [x][y],
-Same values for all in same col [x][y],
-Same values for row-col pairs [x][y] for [x==y],
-Same values for row-col pairs [x][y] for [x + y == 2].
+Same values for all in same row [x][y], -> [x][0|1|2]
+Same values for all in same col [x][y], -> [0|1|2][y]
+Same values for row-col pairs [x][y] for [x==y], -> [0,1,2][0,1,2]
+Same values for row-col pairs [x][y] for [x + y == 2]. [0,1,2][2,1,0]
 
 0,0 0,1 0,2
-1,0 1,1 1,2
+1,0 1,1 1,2  
 2,0 2,1 2,2
 
 - [IDEA] two-dimensional Arrays! Remember how to do them?
