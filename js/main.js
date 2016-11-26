@@ -116,27 +116,35 @@ function clearBoard(board) {
 }
 
 
+
+/**********
+* GRID CHECK HELPER FUNCTIONS
+* TODO: There is potential for refactoring here.
+**********/
+
 /***
 * Checks if items in a row are equal.
 ***/
-function threeInARow(row) {
+function threeInARow(grid, ri) {
+  // ri = row index
   // Get initial item and compare all other items against it.
   // If all items are equal, this will return true.
-  console.log(row);
+  console.log(grid);
 
   // If initial item not set return false.
-  if (row[0] == null) {
+  if (grid[ri][0] == null) {
     return false;
   }
   // If any item differs from initial, return false.
-  for (var i = 1; i < row.length; i++) {
-    if (row[i] != row[0]) {
+  for (var i = 1; i < grid.length; i++) {
+    if (grid[ri][i] != grid[ri][0]) {
       return false;
     }
   }
-  console.log("All same");
-  return row[0];
+  console.log("All same. Row.");
+  return grid[ri][0];
 }
+
 
 /***
 * Checks if items in a column are equal.
@@ -147,30 +155,93 @@ function threeInAColumn(grid, ci) {
     return false;
   }
 
-  for (var j = 1; j < grid.length; j++) {
-    if (grid[j][ci] != grid[0][ci]) {
+  for (var i = 1; i < grid.length; i++) {
+    if (grid[i][ci] != grid[0][ci]) {
       return false;
     }
   }
-  console.log("All same");
-  return grid[ci];
+  console.log("All same. Column.");
+  return grid[0][ci];
 }
+
+
+/***
+* Checks if items in the UL-LR diagonal are equal.
+***/
+function threeInADiagonal(grid) {
+  // Check upper left diagonal first
+  if (grid[0][0] == null) {
+    return false;
+  }
+
+  for (var i = 0; i < grid.length; i++) {
+    if (grid[i][i] != grid[0][0]) {
+      return false;
+    }
+  }
+  console.log("All same. UL to LR.");
+  return grid[0][0];
+}
+
+
+
+/***
+* Checks if items in the LL-UR diagonal are equal.
+***/
+function threeInAReverseDiagonal(grid) {
+  var x = grid.length - 1;
+  if (grid[0][x] == null) {
+    return false;
+  }
+
+  for (var i = 0; i < grid.length; i++) {
+    if (grid[x - i][i] != grid[0][x]) {
+      return false;
+    }
+  }
+  console.log("All same. LL to UR.");
+  return grid[0][x];
+}
+
+
+/******
+* Invokes all helper check functions on a grid
+* to determine if somebody has won.
+*******/
+function threeInAGrid(grid) {
+  // Do the rows and columns first.
+  for (var i = 0; i < grid.length; i++) {
+    if (threeInARow(grid, i)) return true;
+    if (threeInAColumn(grid, i)) return true;
+  }
+
+  // Finally, diagonals.
+  if (threeInADiagonal(grid)) return true;
+  if (threeInAReverseDiagonal(grid)) return true;
+}
+
+
 
 
 /***
 * Checks GameState.
 ***/
 function checkGameState() {
+  // Minimum of five moves is needed for a winning constellation.
+  if (moveCount < 5) {
+    return false;
+  }
+
   // A player has scored three in a row.
-  // TODO: Implement this for columns and diagonals.
-  tttGrid.forEach(function(row) {
-    var allSame = threeInARow(row);
-    if (allSame) {
-      console.log(allSame + ' has won');
-      // TODO: Actually, call Game Over function.
-      return true;
-    }
-  })
+
+
+  if (threeInAGrid(tttGrid)) {
+    console.log(activePlayer + ' has won');
+    // TODO: Actually, call Game Over function.
+    return true;
+  }
+
+
   // Stalemate game.
   if (moveCount >= 9) {
     console.log('Game O-ver');
@@ -185,45 +256,3 @@ function resetGameState() {
   moveCount = 0;
   tttGrid = initializeGrid();
 }
-
-
-
-/**
-Let's jury-rig a successful checker here
-**/
-var riggedMatrix = [
-  ['X',  null, 'X'],
-  [null, 'O',  'X'],
-  ['O',  'X',  'X']
-]
-
-console.log(riggedMatrix.length);
-
-// Do the rows first.
-for (var i = 0; i < riggedMatrix.length; i++) {
-  // riggedMatrix[i]
-  threeInARow(riggedMatrix[i]);
-  threeInAColumn(riggedMatrix, i);
-}
-
-// Columns next.
-for (var i = 0; i < riggedMatrix.length; i++) {
-}
-
-// Finally, diagonals.
-
-
-
-  // // If initial item not set return false.
-  // if (row[0] == null) {
-  //   return false;
-  // }
-  // // If any item differs from initial, return false.
-  // for (var i = 1; i < row.length; i++) {
-  //   if (row[i] != row[0]) {
-  //     return false;
-  //   }
-  // }
-  // console.log("All same");
-  // return row[0];
-  //
